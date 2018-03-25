@@ -1,0 +1,14 @@
+app-demo-file-upload {
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+.card {
+  margin: 0 auto;
+}
+.slimbar-container {
+  padding: 5px;
+}
