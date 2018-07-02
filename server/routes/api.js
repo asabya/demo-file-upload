@@ -6,16 +6,30 @@ router.post('/upload-file', function(req, res, next) {
   if (req.busboy) {
 
     req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-      fstream = fs.createWriteStream(__dirname + '/../../public/my-files/' + filename);
-      file.pipe(fstream);
-      fstream.on('close', function(){
-        console.log('file ' + filename + ' uploaded');
-      });
+      console.log('file upload function');
+      // Validate file mimetype
+      if(mimetype != 'image/png'){
+        console.log('mime not satisfied');
+        file.resume();
+        return res.json({
+          success: false,
+          message: 'Invalid file format'
+        });
+      }
+      else {
+        console.log('mime satisfied');
+        fstream = fs.createWriteStream(__dirname + '/../../public/my-files/' + filename);
+        file.pipe(fstream);
+        fstream.on('close', function(){
+          console.log('file ' + filename + ' uploaded');
+          return res.json({
+            success: true
+          });
+        });
+      }
+
     });
-    req.busboy.on('finish', function(){
-      console.log('finish, files uploaded ');
-      res.json({ success : true});
-    });
+
     req.pipe(req.busboy);
   }
 });
