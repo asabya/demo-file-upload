@@ -5,16 +5,14 @@ router.post('/upload-file', function(req, res, next) {
   var fstream;
   if (req.busboy) {
 
+
     req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
       console.log('file upload function');
       // Validate file mimetype
       if(mimetype != 'image/png'){
         console.log('mime not satisfied');
         file.resume();
-        return res.json({
-          success: false,
-          message: 'Invalid file format'
-        });
+        res.status(500).send('Invalid file format');
       }
       else {
         console.log('mime satisfied');
@@ -29,7 +27,6 @@ router.post('/upload-file', function(req, res, next) {
       }
 
     });
-
     req.pipe(req.busboy);
   }
 });

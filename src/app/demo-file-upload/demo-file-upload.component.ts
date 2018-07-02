@@ -27,34 +27,30 @@ export class DemoFileUploadComponent implements OnInit {
     this.http.post(`/api/upload-file`, fd, {
       reportProgress: true, observe: 'events'
     }).subscribe( (event: HttpEvent<any>) => {
-      switch (event.type) {
-        case HttpEventType.Sent:
-          this.slimLoadingBarService.start();
-          break;
-        case HttpEventType.Response:
-          this.slimLoadingBarService.complete();
-          if (event.body.success) {
-            this.message = 'Uploaded Successfully';
-          } else {
-            this.message = event.body.message;
+          switch (event.type) {
+            case HttpEventType.Sent:
+              this.slimLoadingBarService.start();
+              break;
+            case HttpEventType.Response:
+              this.slimLoadingBarService.complete();
+              this.message = "Uploaded Successfully";
+              this.showMessage = true;
+              break;
+            case 1: {
+              if (Math.round(this.uploadedPercentage) !== Math.round(event['loaded'] / event['total'] * 100)){
+                this.uploadedPercentage = event['loaded'] / event['total'] * 100;
+                this.slimLoadingBarService.progress = Math.round(this.uploadedPercentage);
+              }
+              break;
+            }
           }
+        },
+        error => {
+          console.log(error);
+          this.message = error.error;
           this.showMessage = true;
-          break;
-        case 1: {
-          if (Math.round(this.uploadedPercentage) !== Math.round(event['loaded'] / event['total'] * 100)){
-            this.uploadedPercentage = event['loaded'] / event['total'] * 100;
-            this.slimLoadingBarService.progress = Math.round(this.uploadedPercentage);
-          }
-          break;
-        }
-      }
-    },
-    error => {
-      console.log(error);
-      this.message = "Something went wrong";
-      this.showMessage = true;
-      this.slimLoadingBarService.reset();
-    });
+          this.slimLoadingBarService.reset();
+        });
   }
 
 }
