@@ -27,7 +27,6 @@ export class DemoFileUploadComponent implements OnInit {
     this.http.post(`/api/upload-file`, fd, {
       reportProgress: true, observe: 'events'
     }).subscribe( (event: HttpEvent<any>) => {
-      console.log(event);
       switch (event.type) {
         case HttpEventType.Sent:
           this.slimLoadingBarService.start();
